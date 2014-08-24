@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+
+		<!-- Demo assets -->
+		<title>Number Spinner demo</title>
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+
+		<!-- Dependencies -->
+		<script type="text/javascript" src="../lib/jquery-2.1.1.min.js"></script>
+		<script type="text/javascript" src="../lib/GreenSock-js/TweenLite.min.js"></script>
+
+		<!-- Number Spinner plugin -->
+		<link rel="stylesheet" type="text/css" href="../src/jquery.numberSpinner.css" />
+		<script type="text/javascript" src="../src/jquery.numberSpinner.js"></script>
+
+		<!-- Initialisation -->
+		<script type="text/javascript">
+			(function($) {
+				$(function() {
+
+					// Initialise number spinner
+					$('[data-number-spinner]').numberSpinner();
+
+				});
+			})(jQuery);
+		</script>
+
+	</head>
+
+	<body>
+		<div id="demo">
+
+			<div class="number-spinner" data-number-spinner>123</div>
+
+		</div>
+	</body>
+
+</html>
