@@ -21,7 +21,8 @@
 				$(function() {
 
 					// Initialise number spinner
-					$('[data-number-spinner]').numberSpinner();
+					$('[data-number-spinner]').numberSpinner()
+					.numberSpinner('set', 123);
 
 				});
 			})(jQuery);
@@ -32,7 +33,7 @@
 	<body>
 		<div id="demo">
 
-			<div class="number-spinner" data-number-spinner>123</div>
+			<div class="number-spinner" data-number-spinner data-min-digits="3">0</div>
 
 		</div>
 	</body>
