@@ -1,3 +1,10 @@
+var jQuery;
+if (typeof window !== 'undefined' && window.jQuery) {
+  jQuery = window.jQuery;
+} else if (typeof require !== 'undefined') {
+  jQuery = require('jquery');
+}
+
 (function($) {
 
 
