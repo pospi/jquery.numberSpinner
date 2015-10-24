@@ -163,7 +163,8 @@ if (typeof window !== 'undefined' && window.jQuery) {
 
 				// Move tiles to position
 				var $tiles = data.elements.tile_wrapper.find('.' + data.options.tile_class),
-				tile_height = $tiles.eq(0).height(), tile_offset = -(tile_height * 10);
+				tile_height = $tiles.find('.' + data.options.digit_class).eq(0).height(), tile_offset = -(tile_height * 10);
+
 				$tiles.each(function(ti, tile) {
 
 					// Get tile, digits wrapper and tile data
