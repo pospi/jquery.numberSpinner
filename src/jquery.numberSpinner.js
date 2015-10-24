@@ -182,10 +182,11 @@ if (typeof window !== 'undefined' && window.jQuery) {
 					// Animate tiles if animating
 					if (animate !== false) {
 						tile_data.tw = new TweenLite(tile_data, data.options.spin_duration, {
+							overwrite: true,
 							ease: data.options.spin_ease,
 							offset: offset,
 							onUpdate: function() {
-								$digits.css('top', tile_offset + (this.offset % 10) * tile_height);
+								$digits.css('transform', 'translateY(' + (tile_offset + (this.offset % 10) * tile_height) + 'px)');
 							},
 							onUpdateScope: tile_data
 						});
@@ -193,7 +194,7 @@ if (typeof window !== 'undefined' && window.jQuery) {
 
 					// Set tile position if not animating
 					else {
-						$digits.css('top', tile_offset + (offset % 10) * tile_height),
+						$digits.css('transform', 'translateY(' + (tile_offset + (offset % 10) * tile_height) + 'px)'),
 						tile_data.offset = offset;
 					}
 
