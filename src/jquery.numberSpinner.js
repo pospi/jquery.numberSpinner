@@ -205,10 +205,11 @@ if (typeof window !== 'undefined' && window.jQuery) {
 				}
 
 				// Resize wrapper if animating
-				if (animate !== false) {
+				var to_width = $this.width();
+
+				if (animate !== false && to_width !== from_width) {
 
 					// Get new width, reset current width, show excess tiles
-					var to_width = $this.width();
 					$this.width(from_width),
 					$tiles.removeAttr('style');
 
