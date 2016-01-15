@@ -41,8 +41,12 @@ if (typeof window !== 'undefined' && window.jQuery) {
 				$this.data(plugin.namespace, data);
 
 				// Get properties
-				var min_digits = $this.data('min-digits');
-				if (min_digits !== undefined) data.options.min_digits = min_digits;
+				if ($this.data('min-digits') !== undefined) {
+					data.options.min_digits = $this.data('min-digits');
+				}
+				if ($this.data('blank-leading-digits') !== undefined) {
+					data.options.blank_leading_digits = $this.data('blank-leading-digits');
+				}
 
 				// Initialise elements
 				_private.initialiseElements.call($this);
@@ -80,7 +84,7 @@ if (typeof window !== 'undefined' && window.jQuery) {
 			return this.each(function() {
 				var $this = $(this),
 				data = $this.data(plugin.namespace);
-				
+
 				// Render number
 				_private.renderNumber.call($this, number, (animate !== false));
 
@@ -143,11 +147,12 @@ if (typeof window !== 'undefined' && window.jQuery) {
 				data = $this.data(plugin.namespace);
 
 				// Get spinner length and current width
-				var length = Math.max(data.options.min_digits, number.toString().length),
+				var numberLength = number.toString().length;
+				var displayLength = Math.max(data.options.min_digits, numberLength),
 				from_width = $this.width();
 
 				// Prepend tiles to fill spinner
-				while (data.elements.tile_wrapper.find('.' + data.options.tile_class).length < length) {
+				while (data.elements.tile_wrapper.find('.' + data.options.tile_class).length < displayLength) {
 					var $tile = $('<span />', {'class': data.options.tile_class}),
 					$digits = $('<span />', {'class': data.options.digit_wrapper_class}),
 					di;
@@ -157,7 +162,11 @@ if (typeof window !== 'undefined' && window.jQuery) {
 							'text': (di % 10)
 						}));
 					}
-					$tile.append($digits),
+					$digits.append($('<span />', {  // extra file for blank digits if configured to display spaces instead
+						'class': data.options.digit_class,
+						'html': '&nbsp;'
+					}));
+					$tile.append($digits);
 					data.elements.tile_wrapper.prepend($tile);
 				}
 
@@ -166,19 +175,24 @@ if (typeof window !== 'undefined' && window.jQuery) {
 				tile_height = $tiles.find('.' + data.options.digit_class).eq(0).height(), tile_offset = -(tile_height * 10);
 
 				$tiles.each(function(ti, tile) {
+					const isEmpty = data.options.blank_leading_digits && numberLength < (displayLength - ti);
 
 					// Get tile, digits wrapper and tile data
 					var $tile = $(tile),
 					$digits = $tile.find('.' + data.options.digit_wrapper_class),
 					tile_data = $tile.data(plugin.namespace);
 					if (!tile_data) {
-						tile_data = {offset: 0},
+						tile_data = { offset: 0, empty: isEmpty },
+						$tile.data(plugin.namespace, tile_data);
+					}
+					if (isEmpty !== tile_data.empty) {
+						tile_data.empty = isEmpty;
 						$tile.data(plugin.namespace, tile_data);
 					}
 
 					// Get tile offset
-					var offset = Math.floor(number / Math.pow(10, $tiles.length - ti - 1));
-					
+					var offset = tile_data.empty ? 11 : (Math.floor(number / Math.pow(10, $tiles.length - ti - 1)) % 10);
+
 					// Animate tiles if animating
 					if (animate !== false) {
 						tile_data.tw = new TweenLite(tile_data, data.options.spin_duration, {
@@ -186,7 +200,7 @@ if (typeof window !== 'undefined' && window.jQuery) {
 							ease: data.options.spin_ease,
 							offset: offset,
 							onUpdate: function() {
-								$digits.css('transform', 'translateY(' + (tile_offset + (this.offset % 10) * tile_height) + 'px)');
+								$digits.css('transform', 'translateY(' + (tile_offset + (this.offset) * tile_height) + 'px)');
 							},
 							onUpdateScope: tile_data
 						});
@@ -194,14 +208,14 @@ if (typeof window !== 'undefined' && window.jQuery) {
 
 					// Set tile position if not animating
 					else {
-						$digits.css('transform', 'translateY(' + (tile_offset + (offset % 10) * tile_height) + 'px)'),
+						$digits.css('transform', 'translateY(' + (tile_offset + (offset) * tile_height) + 'px)'),
 						tile_data.offset = offset;
 					}
 
 				});
 
 				// Trim or hide excess tiles
-				for (var ti = 0; ti < $tiles.length - length; ti++) {
+				for (var ti = 0; ti < $tiles.length - displayLength; ti++) {
 					if (animate !== false) $tiles.eq(ti).css('display', 'none');
 					else $tiles.eq(ti).remove();
 				}
@@ -222,13 +236,13 @@ if (typeof window !== 'undefined' && window.jQuery) {
 						// Remove styles and trim excess tiles on complete
 						always: function() {
 							$this.removeAttr('style');
-							for (var ti = 0; ti < $tiles.length - length; ti++) {
+							for (var ti = 0; ti < $tiles.length - displayLength; ti++) {
 								$tiles.eq(ti).remove();
 							}
 						}
 
 					});
-					
+
 				}
 
 			});
